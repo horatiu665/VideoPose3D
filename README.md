@@ -1,3 +1,13 @@
+# Changes from forked repo
+
+- can run in realtime (low framerate) from webcam
+- sends data over sockets
+- bat scripts for easier running of step2, step4, step5 of inference (see [INFERENCE.MD](INFERENCE.MD))
+
+
+
+
+
 # 3D human pose estimation in video with temporal convolutions and semi-supervised training
 <p align="center"><img src="images/convolutions_anim.gif" width="50%" alt="" /></p>
 
