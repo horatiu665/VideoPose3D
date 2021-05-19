@@ -47,7 +47,10 @@ def parse_args():
         type=str
     )
     parser.add_argument(
-        'im_or_folder', help='image or folder of images', default=None
+        '--im_or_folder',
+        dest='im_or_folder',
+        help='image or folder of images',
+        default=None
     )
     if len(sys.argv) == 1:
         parser.print_help()
@@ -80,23 +83,68 @@ def read_video(filename):
         yield np.frombuffer(data, dtype='uint8').reshape((h, w, 3))
 
 
-def main(args):
-
+def prepare_predictor(
+    args_cfg
+):
     cfg = get_cfg()
-    cfg.merge_from_file(model_zoo.get_config_file(args.cfg))
+    cfg.merge_from_file(model_zoo.get_config_file(args_cfg))
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
-    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(args.cfg)
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(args_cfg)
     predictor = DefaultPredictor(cfg)
-    
+    return predictor
 
-    if os.path.isdir(args.im_or_folder):
-        im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
+
+def inference_on_frame(
+    predictor, frame
+):
+    t = time.time()
+    outputs = predictor(frame)['instances'].to('cpu')
+
+    print('Frame processed in {:.3f}s'.format(time.time() - t))
+
+    has_bbox = False
+    if outputs.has('pred_boxes'):
+        bbox_tensor = outputs.pred_boxes.tensor.numpy()
+        if len(bbox_tensor) > 0:
+            has_bbox = True
+            scores = outputs.scores.numpy()[:, None]
+            bbox_tensor = np.concatenate((bbox_tensor, scores), axis=1)
+    if has_bbox:
+        kps = outputs.pred_keypoints.numpy()
+        kps_xy = kps[:, :, :2]
+        kps_prob = kps[:, :, 2:3]
+        kps_logit = np.zeros_like(kps_prob)  # Dummy
+        kps = np.concatenate((kps_xy, kps_logit, kps_prob), axis=2)
+        kps = kps.transpose(0, 2, 1)
     else:
-        im_list = [args.im_or_folder]
+        kps = []
+        bbox_tensor = []
 
+    # Mimic Detectron1 format
+    cls_boxes = [[], bbox_tensor]
+    cls_keypoints = [[], kps]
+
+    return cls_boxes, cls_keypoints
+
+
+def main_inference_no_args(
+    args_cfg, im_or_folder, image_ext, output_dir
+):
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(args_cfg))
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(args_cfg)
+    predictor = DefaultPredictor(cfg)
+
+    if os.path.isdir(im_or_folder):
+        im_list = glob.iglob(im_or_folder + '/*.' + image_ext)
+    else:
+        im_list = [im_or_folder]
+
+    # process each video in the list
     for video_name in im_list:
         out_name = os.path.join(
-                args.output_dir, os.path.basename(video_name)
+                output_dir, os.path.basename(video_name)
             )
         print('Processing {}'.format(video_name))
 
@@ -144,6 +192,11 @@ def main(args):
         }
         
         np.savez_compressed(out_name, boxes=boxes, segments=segments, keypoints=keypoints, metadata=metadata)
+
+
+
+def main(args):
+    main_inference_no_args(args.cfg, args.im_or_folder, args.image_ext, args.output_dir)
 
 
 if __name__ == '__main__':

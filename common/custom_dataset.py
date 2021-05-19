@@ -24,6 +24,50 @@ custom_camera_params = {
     'translation': [1841.1070556640625, 4955.28466796875, 1563.4454345703125],
 }
 
+
+class FakeCustomDataset(MocapDataset):
+    def __init__(self, metadata):
+        super().__init__(fps=None, skeleton=h36m_skeleton)
+
+        self._data = {}
+
+        resolutions = metadata['video_metadata']
+
+        self._cameras = {}
+        self._data = {}
+        for video_name, res in resolutions.items():
+            cam = {}
+            cam.update(custom_camera_params)
+            cam['orientation'] = np.array(cam['orientation'], dtype='float32')
+            cam['translation'] = np.array(cam['translation'], dtype='float32')
+            cam['translation'] = cam['translation'] / 1000  # mm to meters
+
+            cam['id'] = video_name
+            cam['res_w'] = res['w']
+            cam['res_h'] = res['h']
+
+            self._cameras[video_name] = [cam]
+
+            self._data[video_name] = {
+                'custom': {
+                    'cameras': cam
+                }
+            }
+
+
+        # Bring the skeleton to 17 joints instead of the original 32
+        self.remove_joints([4, 5, 9, 10, 11, 16, 20, 21, 22, 23, 24, 28, 29, 30, 31])
+
+        # Rewire shoulders to the correct parents
+        self._skeleton._parents[11] = 8
+        self._skeleton._parents[14] = 8
+
+        okidoki = 1
+
+    def supports_semi_supervised(self):
+        return False
+
+
 class CustomDataset(MocapDataset):
     def __init__(self, detections_path, remove_static_joints=True):
         super().__init__(fps=None, skeleton=h36m_skeleton)        

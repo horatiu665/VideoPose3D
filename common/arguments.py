@@ -10,6 +10,45 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description='Training script')
 
+    # Horatiu's arguments
+    parser.add_argument('--steps', '--steps', default='245', type=str, help='which steps to run? use 123 for full process, or run 1, 23, or any other combination. they will always be run consecutively 1->2->3')
+    parser.add_argument('-oj', '--output_json', default='output.json', type=str, metavar='PATH', help='output where we put json version of 3d landmarks')
+    parser.add_argument('--rendervideo', '--rendervideo', default='no', type=str, help='yes or no, if it should render a nice output video side by side')
+
+    # step 2 - added from file ../inference/infer_video_d2.py
+    parser.add_argument(
+        '--cfg',
+        dest='cfg',
+        help='cfg model file (/path/to/model_config.yaml)',
+        default=None,
+        type=str
+    )
+    parser.add_argument(
+        '--output-dir',
+        dest='output_dir',
+        help='directory for visualization pdfs (default: /tmp/infer_simple)',
+        default='/tmp/infer_simple',
+        type=str
+    )
+    parser.add_argument(
+        '--image-ext',
+        dest='image_ext',
+        help='image file name extension (default: mp4)',
+        default='mp4',
+        type=str
+    )
+    parser.add_argument(
+        '--im_or_folder',
+        dest='im_or_folder',
+        help='image or folder of images',
+        default=None
+    )
+
+    # step 4 - from file ../data/prepare_data_2d_custom.py
+    parser.add_argument('-i', '--input', type=str, default='', metavar='PATH', help='detections directory')
+    parser.add_argument('-o', '--output', type=str, default='', metavar='PATH', help='output suffix for 2D detections')
+    parser.add_argument('--dataoutputdir', '--dataoutputdir', type=str, default='', metavar='PATH', help='directory for prepared 2d data from step 4')
+
     # General arguments
     parser.add_argument('-d', '--dataset', default='h36m', type=str, metavar='NAME', help='target dataset') # h36m or humaneva
     parser.add_argument('-k', '--keypoints', default='cpn_ft_h36m_dbb', type=str, metavar='NAME', help='2D detections to use')
