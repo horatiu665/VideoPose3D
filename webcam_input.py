@@ -330,6 +330,9 @@ def main_loop():
     initialized = False
     h = {}  # this is where we keep all the good stuff
 
+    # primitive UI for pausing and resuming
+    paused = False
+
     # connect to socket where we will send the positional data
     socket = socket_warionette.WarionetteSocket()
 
@@ -338,8 +341,28 @@ def main_loop():
     window_name = "Warionette"
 
     while True:
+
         # get frame from the webcam/videocapture
         check, frame = video.read()
+
+        # if we're paused, don't do the heavy stuff, just display webcam and unpause button
+        if paused:
+            # wait 1 millisec for a key
+            key = cv2.waitKey(1)
+
+            # pause toggle...
+            if key == ord('p'):
+                paused = not paused
+
+            cv2.putText(frame, "paused. press P to unpause", (30, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (255, 255, 255), 2, cv2.LINE_AA)
+
+            if check_should_exit(key, window_name):
+                break
+
+            cv2.imshow(window_name, frame)
+
+            continue
 
         # only run this once. initialize the detectron2 predictor
         if not initialized:
@@ -376,14 +399,18 @@ def main_loop():
         # show the frame
         cv2.imshow(window_name, frame)
 
-
         # wait 1 millisec for a key
         key = cv2.waitKey(1)
-        if key == 27:  # esc
+
+        # pause toggle...
+        if key == ord('p'):
+            paused = not paused
+
+        # exit check after drawing window. if the window was closed, we exit the program.
+        should_exit = check_should_exit(key, window_name)
+        if should_exit:
             break
-        # window was closed with x button because we cannot detect some property of it.
-        elif cv2.getWindowProperty(window_name, cv2.WND_PROP_AUTOSIZE) < 1:
-            break
+
 
     # stop webcam and visualization.
     video.release()
@@ -391,6 +418,15 @@ def main_loop():
 
     # close network socket
     socket.close()
+
+
+def check_should_exit(key, window_name):
+    if key == 27:  # esc
+        return True
+    # window was closed with x button because we cannot detect some property of it.
+    elif cv2.getWindowProperty(window_name, cv2.WND_PROP_AUTOSIZE) < 1:
+        return True
+    return False
 
 
 if __name__ == '__main__':
