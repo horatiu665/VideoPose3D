@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a503e9d8-a013-48af-844f-fd0ede809f74" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/socket_client_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/socket_send_stuff_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/socket_warionette.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/custom_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/custom_dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webcam_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/webcam_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +36,6 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
@@ -60,7 +55,7 @@
       <recent name="C:\PythonProjects\VideoPose3D-master" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.webcam_input">
+  <component name="RunManager" selected="Python.video_to_unitymocap">
     <configuration name="infer_video_d2" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="VideoPose3D-master" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -188,12 +183,12 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.video_to_unitymocap" />
-      <item itemvalue="Python.run" />
       <item itemvalue="Python.infer_video_d2" />
       <item itemvalue="Python.prepare_data_2d_custom" />
-      <item itemvalue="Python.webcam_input" />
+      <item itemvalue="Python.run" />
       <item itemvalue="Python.socket_send_stuff_test" />
+      <item itemvalue="Python.video_to_unitymocap" />
+      <item itemvalue="Python.webcam_input" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
