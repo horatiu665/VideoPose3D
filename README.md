@@ -1,12 +1,21 @@
 # Changes from forked repo
 
 - can run in realtime (low framerate) from webcam
-- sends data over sockets
-- bat scripts for easier running of step2, step4, step5 of inference (see [INFERENCE.MD](INFERENCE.MD))
+- sends 3d pose data from webcam over sockets (udp)
+- bat scripts for easier running of step2, step4, step5 of inference (see [INFERENCE.MD](INFERENCE.MD)) to transform a .mp4 video into a .json with 3d pose data.
 
+## How to export unity-readable json from a .mp4 video
 
+You must open the file `video_to_mocapunity.bat`, and inside you will find on the first two lines:
+`set myvideo="tommywebcam.mp4"`
+`set output="output_tomtom"`
 
+You must set myvideo="" the name of the video you want to read from. Remember the extension.
+Output is the file name of the .json file that will contain the poses. It will be saved in the root.
 
+Then simply run this bat script, it has all the arguments necessary for the program and it will run through all the steps.
+
+_TODO: Ideas to improve workflow: automatically get list of videos from video_inputs/ and run all of them through the algo, and output them all to something like output_json/_
 
 # 3D human pose estimation in video with temporal convolutions and semi-supervised training
 <p align="center"><img src="images/convolutions_anim.gif" width="50%" alt="" /></p>
